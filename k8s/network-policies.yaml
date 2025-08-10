@@ -1,0 +1,178 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: microservices-network-policy
+  namespace: microservices
+  labels:
+    app: microservices-crud
+    component: security
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress from nginx ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8083
+    - protocol: TCP
+      port: 8081
+    - protocol: TCP
+      port: 8761
+  # Allow inter-service communication within namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: microservices
+    ports:
+    - protocol: TCP
+      port: 8083
+    - protocol: TCP
+      port: 8081
+    - protocol: TCP
+      port: 8761
+  # Allow monitoring from prometheus namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8083
+    - protocol: TCP
+      port: 8081
+    - protocol: TCP
+      port: 8761
+  egress:
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow inter-service communication
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: microservices
+    ports:
+    - protocol: TCP
+      port: 8083
+    - protocol: TCP
+      port: 8081
+    - protocol: TCP
+      port: 8761
+  # Allow external API calls (if needed)
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: user-service-network-policy
+  namespace: microservices
+  labels:
+    app: user-service
+    component: security
+spec:
+  podSelector:
+    matchLabels:
+      app: user-service
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow from product service for user validation
+  - from:
+    - podSelector:
+        matchLabels:
+          app: product-service
+    ports:
+    - protocol: TCP
+      port: 8083
+  # Allow from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8083
+  egress:
+  # Allow to eureka server
+  - to:
+    - podSelector:
+        matchLabels:
+          app: eureka-server
+    ports:
+    - protocol: TCP
+      port: 8761
+  # Allow DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: product-service-network-policy
+  namespace: microservices
+  labels:
+    app: product-service
+    component: security
+spec:
+  podSelector:
+    matchLabels:
+      app: product-service
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow from user service
+  - from:
+    - podSelector:
+        matchLabels:
+          app: user-service
+    ports:
+    - protocol: TCP
+      port: 8081
+  # Allow from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8081
+  egress:
+  # Allow to eureka server
+  - to:
+    - podSelector:
+        matchLabels:
+          app: eureka-server
+    ports:
+    - protocol: TCP
+      port: 8761
+  # Allow to user service for validation
+  - to:
+    - podSelector:
+        matchLabels:
+          app: user-service
+    ports:
+    - protocol: TCP
+      port: 8083
+  # Allow DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+

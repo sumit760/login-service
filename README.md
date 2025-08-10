@@ -188,12 +188,56 @@ All services include Spring Boot Actuator endpoints:
 - `/actuator/info` - Application info
 - `/actuator/metrics` - Application metrics
 
-## 🐳 Docker Support (Coming Soon)
+## 🐳 Docker Support
 
-Each service will include:
-- Individual Dockerfiles
-- Docker Compose configuration
-- Multi-stage builds for optimization
+Each service includes:
+- ✅ Individual Dockerfiles with multi-stage builds
+- ✅ Docker Compose configuration for local development
+- ✅ Optimized container images with security best practices
+
+### Quick Docker Start:
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Or build individual services
+docker build -t user-service .
+docker build -t product-service ./product-service
+```
+
+## ☸️ Kubernetes Deployment
+
+The application is **Kubernetes-ready** with comprehensive manifests and deployment automation.
+
+### 🚀 Quick Kubernetes Deployment:
+```bash
+# Deploy to Kubernetes
+cd k8s
+./deploy.sh
+
+# Access services
+kubectl port-forward svc/user-service 8083:8083 -n microservices
+kubectl port-forward svc/product-service 8081:8081 -n microservices
+```
+
+### 🏗️ Kubernetes Features:
+- ✅ **Complete K8s Manifests**: Deployments, Services, ConfigMaps, Secrets
+- ✅ **Ingress Configuration**: Nginx Ingress with path-based routing
+- ✅ **Auto-scaling**: Horizontal Pod Autoscalers (HPA)
+- ✅ **Health Checks**: Liveness, Readiness, and Startup probes
+- ✅ **Monitoring**: Prometheus ServiceMonitor integration
+- ✅ **Security**: Network Policies and RBAC
+- ✅ **Resource Management**: Requests, limits, and quotas
+- ✅ **Service Discovery**: Eureka integration in K8s environment
+
+### 📊 Production Features:
+- **High Availability**: Multi-replica deployments
+- **Rolling Updates**: Zero-downtime deployments
+- **Resource Optimization**: Proper CPU/Memory allocation
+- **Security**: Network isolation and secret management
+- **Observability**: Comprehensive monitoring and logging
+
+See [k8s/README.md](k8s/README.md) for detailed Kubernetes deployment guide.
 
 ## 🧪 Testing
 
@@ -209,15 +253,15 @@ mvn test
 
 ## 📈 Future Enhancements
 
-- [ ] Complete Order Service implementation
-- [ ] API Gateway with Spring Cloud Gateway
-- [ ] Eureka Server for service discovery
-- [ ] Docker containerization
-- [ ] Message queues (RabbitMQ/Kafka)
-- [ ] Distributed tracing (Zipkin)
-- [ ] Circuit breakers (Hystrix/Resilience4j)
-- [ ] Configuration server (Spring Cloud Config)
-- [ ] Database per service (PostgreSQL/MySQL)
+- [ ] **Order Service** implementation with inter-service communication
+- [ ] **API Gateway** with Spring Cloud Gateway for unified entry point
+- [ ] **Message Queues** (RabbitMQ/Kafka) for async communication
+- [ ] **Distributed Tracing** (Zipkin/Jaeger) for request tracking
+- [ ] **Circuit Breakers** (Resilience4j) for fault tolerance
+- [ ] **Configuration Server** (Spring Cloud Config) for centralized config
+- [ ] **Production Databases** (PostgreSQL/MySQL) with persistence
+- [ ] **Service Mesh** (Istio) for advanced traffic management
+- [ ] **GitOps** deployment with ArgoCD/Flux
 
 ## 🤝 Contributing
 
@@ -238,4 +282,3 @@ For questions and support, please open an issue in the GitHub repository.
 ---
 
 **Built with ❤️ using Spring Boot and Microservices Architecture**
-
