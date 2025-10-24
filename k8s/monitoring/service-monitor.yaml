@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: microservices-monitor
+  namespace: microservices
+  labels:
+    app: microservices-crud
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: user-service
+  endpoints:
+  - port: http
+    path: /actuator/prometheus
+    interval: 30s
+    scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: product-service-monitor
+  namespace: microservices
+  labels:
+    app: microservices-crud
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: product-service
+  endpoints:
+  - port: http
+    path: /actuator/prometheus
+    interval: 30s
+    scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: eureka-server-monitor
+  namespace: microservices
+  labels:
+    app: microservices-crud
+    component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: eureka-server
+  endpoints:
+  - port: http
+    path: /actuator/prometheus
+    interval: 30s
+    scrapeTimeout: 10s
+

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: microservices
+  labels:
+    app: user-service
+    component: config
+data:
+  application.yml: |
+    server:
+      port: 8083
+    
+    spring:
+      application:
+        name: user-service
+      
+      datasource:
+        url: jdbc:h2:mem:userdb
+        driver-class-name: org.h2.Driver
+        username: sa
+        password: password
+      
+      jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+          ddl-auto: create-drop
+        show-sql: false
+        properties:
+          hibernate:
+            format_sql: true
+      
+      h2:
+        console:
+          enabled: true
+          path: /h2-console
+    
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://eureka-server:8761/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+      instance:
+        prefer-ip-address: true
+        hostname: user-service
+    
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: always
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+    
+    logging:
+      level:
+        com.example.login: INFO
+        org.springframework.security: INFO
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    
+    jwt:
+      secret: ${JWT_SECRET:mySecretKey}
+      expiration: 86400000
+

@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-config
+  namespace: microservices
+  labels:
+    app: product-service
+    component: config
+data:
+  application.yml: |
+    server:
+      port: 8081
+    
+    spring:
+      application:
+        name: product-service
+      
+      datasource:
+        url: jdbc:h2:mem:productdb
+        driver-class-name: org.h2.Driver
+        username: sa
+        password: password
+      
+      jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+          ddl-auto: create-drop
+        show-sql: false
+        properties:
+          hibernate:
+            format_sql: true
+      
+      h2:
+        console:
+          enabled: true
+          path: /h2-console
+    
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://eureka-server:8761/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+      instance:
+        prefer-ip-address: true
+        hostname: product-service
+    
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: always
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+    
+    logging:
+      level:
+        com.example.product: INFO
+      pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
